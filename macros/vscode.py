@@ -3,7 +3,7 @@ from macro_actions import S
 
 app = {               # REQUIRED dict, must be named 'app'
     'name' : 'Code', # Application name
-    'exec' : ['code.exe','devenv.exe'], # Executable names
+    'exec' : ['code','devenv'], # Executable names
     'macros' : [      # List of button macros...
         # COLOR    LABEL    KEY SEQUENCE
         # 1st row ----------

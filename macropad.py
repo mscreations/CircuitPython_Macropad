@@ -86,8 +86,6 @@ class SerialHandler:
     Class for handling serial input from the connected computer
     """
     def __init__(self, in_buf_size=256):
-        if usb_cdc.data == None:
-            print('Something wrong')
         self.serial = usb_cdc.data
         self.in_data = bytearray()
         self.in_buf_size = in_buf_size

@@ -1,5 +1,5 @@
-import supervisor
 import microcontroller
+import sys
 
 try:
     print("Starting macropad")
@@ -8,7 +8,10 @@ except Exception as e:
     import time
     import traceback
     error = traceback.format_exception(e, e, e.__traceback__)
-    error = error.strip().replace("\r\n", " | ")
+    if sys.implementation.version[0] == 8:
+        error = "\r\n".join(error).split().replace("\r\n", " | ")
+    else:
+        error = error.strip().replace("\r\n", " | ")
 
     while True:
         print("\n----------")

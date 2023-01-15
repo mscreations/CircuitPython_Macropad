@@ -9,7 +9,7 @@ from macro_actions import S
 
 app = {                # REQUIRED dict, must be named 'app'
     'name' : 'Numpad', # Application name
-    'exec' : ['excel.exe', 'speedcrunch.exe', 'calculatorapp.exe', 'calculator.exe', 'calc.exe'], # Executable names
+    'exec' : ['excel', 'speedcrunch', 'calculatorapp', 'calculator', 'calc'], # Executable names
     'macros' : [       # List of button macros...
         # COLOR    LABEL    KEY SEQUENCE
         # 1st row ----------
