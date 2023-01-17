@@ -26,6 +26,7 @@ from adafruit_macropad import MacroPad
 from macro_actions import MacroAction, Tone, Type
 from colors import *
 import usb_cdc
+import supervisor
 
 # CONFIGURABLES ------------------------
 
@@ -213,9 +214,32 @@ else:
     app_index = 0
     apps[app_index].switch()
 
+shtdwn = False
+disconnectCnt = 0       # Number of successive disconnects before powering down
+
 # MAIN LOOP ----------------------------
 
 while True:
+        # Laptop power down handling
+    if not supervisor.runtime.usb_connected:
+        if disconnectCnt < 20:  # skip the first 20 disconnects
+            disconnectCnt += 1  # in case the first are glitches
+            continue
+        shtdwn = True
+        group.hidden = True
+        macropad.pixels.brightness = 0.0
+        macropad.display.refresh()
+        macropad.pixels.show()
+        disconnectCnt = 0
+        continue
+    if shtdwn:  # we will only reach here if we are no longer disconnected so turn back on
+        disconnectCnt = 0
+        group.hidden = False
+        macropad.pixels.brightness = 1.0
+        macropad.display.refresh()
+        macropad.pixels.show()
+        shtdwn = False
+
     # Read from serial port
     sin = serialHandler.get_serial_input()
     if sin:
