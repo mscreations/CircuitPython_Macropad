@@ -108,10 +108,13 @@ class SerialHandler:
 
     def get_serial_input(self):
         if self.serial is None:
+            macropad.red_led = False
             return
         if not self.serial.connected:
+            macropad.red_led = False
             return
-        if self.serial.in_waiting > 0:  #self.serial != None and
+        macropad.red_led = True
+        if self.serial.in_waiting > 0:
             b = self.serial.read(1)
             if b in [b'\n', b'\r']:
                 # Echo back
