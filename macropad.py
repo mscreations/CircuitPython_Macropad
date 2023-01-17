@@ -7,6 +7,11 @@ A macro/hotkey program for Adafruit MACROPAD. Macro setups are stored in the
 /macros folder (configurable below), load up just the ones you're likely to
 use. Plug into computer's USB port, use dial to select an application macro
 set, press MACROPAD keys to send key sequences and other USB protocols.
+
+Uses code from following awesome projects:
+https://github.com/Neradoc/Circuitpython_Hotkeys_Plus
+and
+https://github.com/xhargh/MacropadApplicationDetector
 """
 
 # pylint: disable=import-error, unused-import, too-few-public-methods
@@ -22,7 +27,6 @@ from macro_actions import MacroAction, Tone, Type
 from colors import *
 import usb_cdc
 
-
 # CONFIGURABLES ------------------------
 
 MACRO_FOLDER = '/macros'
@@ -32,8 +36,7 @@ MACRO_FOLDER = '/macros'
 
 class App:
     """ Class representing a host-side application, for which we have a set
-        of macro sequences. Project code was originally more complex and
-        this was helpful, but maybe it's excessive now?"""
+        of macro sequences."""
     def __init__(self, appdata):
         self.name = appdata['name']
         self.macros = appdata['macros']
@@ -86,12 +89,19 @@ class SerialHandler:
     Class for handling serial input from the connected computer
     """
     def __init__(self, in_buf_size=256):
+        if usb_cdc.data is None:
+            print("ERROR: Cannot enable data port. Is it enabled in boot.py?")
+            return
         self.serial = usb_cdc.data
         self.in_data = bytearray()
         self.in_buf_size = in_buf_size
         print('Serial port initialized')
 
     def get_serial_input(self):
+        if self.serial is None:
+            return
+        if not self.serial.connected:
+            return
         if self.serial.in_waiting > 0:  #self.serial != None and
             b = self.serial.read(1)
             if b in [b'\n', b'\r']:
