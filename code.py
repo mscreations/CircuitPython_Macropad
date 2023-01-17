@@ -8,10 +8,7 @@ except Exception as e:
     import time
     import traceback
     error = traceback.format_exception(e, e, e.__traceback__)
-    if sys.implementation.version[0] == 8:
-        error = "\r\n".join(error).split().replace("\r\n", " | ")
-    else:
-        error = error.strip().replace("\r\n", " | ")
+    error = "\r\n".join(error)
 
     while True:
         print("\n----------")
