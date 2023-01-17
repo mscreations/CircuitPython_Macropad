@@ -92,7 +92,6 @@ class App:
     def get_exec(self):
         return self.exec
 
-
 class SerialHandler:
     """
     Class for handling serial input from the connected computer
@@ -204,7 +203,6 @@ if not apps:
 
 last_position = None
 prev_app_index = 0
-# last_encoder_switch = macropad.encoder_switch_debounced.pressed
 
 if boot_map:
     # TODO: solve how to put boot app into a app_index that can be removed
@@ -263,19 +261,6 @@ while True:
             continue # Key disabled (no text). Skip.
         key_number = event.key_number
         pressed = event.pressed
-    # encoder_switch = macropad.encoder_switch_debounced.pressed
-    # if encoder_switch != last_encoder_switch:
-    #     last_encoder_switch = encoder_switch
-    #     if len(apps[app_index].macros) < 13:
-    #         continue    # No 13th macro, just resume main loop
-    #     key_number = 12 # else process below as 13th macro
-    #     pressed = encoder_switch
-    # else:
-    #     event = macropad.keys.events.get()
-    #     if not event or event.key_number >= len(apps[app_index].macros):
-    #         continue # No key events, or no corresponding macro, resume loop
-    #     key_number = event.key_number
-    #     pressed = event.pressed
 
     # If code reaches here, a key or the encoder button WAS pressed/released
     # and there IS a corresponding macro available for it...other situations
@@ -285,13 +270,12 @@ while True:
     if not isinstance(sequence, (list, tuple)):
         sequence = (sequence,)
     if pressed:
-        # 'sequence' is an arbitrary-length list, each item is one of:
-        # Positive integer (e.g. Keycode.KEYPAD_MINUS): key pressed
-        # Negative integer: (absolute value) key released
-        # Float (e.g. 0.25): delay in seconds
-        # String (e.g. "Foo"): corresponding keys pressed & released
-        # List []: one or more Consumer Control codes (can also do float delay)
-        # Dict {}: mouse buttons/motion (might extend in future)
+        # 'sequence' is arbitrary-length
+        # each item in the sequence is either
+        # an action instance or a floating point value
+        # Action   ==>  execute the action
+        # Float    ==>  sleep in seconds
+        # Function ==>  call it with context
         if key_number < 12: # No pixel for encoder button
             macropad.pixels[key_number] = FULLWHITE
             macropad.pixels.show()
@@ -315,58 +299,23 @@ while True:
             elif callable(item):
                 item(pad=macropad, key=key_number, idx=index)
             elif isinstance(item, int):
+                # compatibility (legacy)
                 if item > 0:
                     macropad.keyboard.press(item)
                 else:
                     macropad.keyboard.release(item)
             elif isinstance(item, str):
+                # compatibility (legacy)
                 Type.write(item)
             else:
                 print("Unknown action", item)
-
-            # elif isinstance(item, list):
-            #     for code in item:
-            #         if isinstance(code, int):
-            #             macropad.consumer_control.release()
-            #             macropad.consumer_control.press(code)
-            #         if isinstance(code, float):
-            #             time.sleep(code)
-            # elif isinstance(item, dict):
-            #     if 'buttons' in item:
-            #         if item['buttons'] >= 0:
-            #             macropad.mouse.press(item['buttons'])
-            #         else:
-            #             macropad.mouse.release(-item['buttons'])
-            #     macropad.mouse.move(item['x'] if 'x' in item else 0,
-            #                         item['y'] if 'y' in item else 0,
-            #                         item['wheel'] if 'wheel' in item else 0)
-            #     if 'tone' in item:
-            #         if item['tone'] > 0:
-            #             macropad.stop_tone()
-            #             macropad.start_tone(item['tone'])
-            #         else:
-            #             macropad.stop_tone()
-            #     elif 'play' in item:
-            #         macropad.play_file(item['play'])
     else:
         # Release any still-pressed keys, consumer codes, mouse buttons
-        # Keys and mouse buttons are individually released this way (rather
-        # than release_all()) because pad supports multi-key rollover, e.g.
-        # could have a meta key or right-mouse held down by one macro and
-        # press/release keys/buttons with others. Navigate popups, etc.
         for item in sequence:
             if isinstance(item, MacroAction):
                 item.release()
             if isinstance(item, int) and item >= 0:
                 macropad.keyboard.release(item)
-            # elif isinstance(item, dict):
-            #     if 'buttons' in item:
-            #         if item['buttons'] >= 0:
-            #             macropad.mouse.release(item['buttons'])
-            #     elif 'tone' in item:
-            #         macropad.stop_tone()
-        # macropad.consumer_control.release()
-
         if key_number < 12: # No pixel for encoder button
             macropad.pixels[key_number] = apps[app_index].macros[key_number][0]
             macropad.pixels.show()
