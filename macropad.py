@@ -40,6 +40,9 @@ class App:
     def __init__(self, appdata):
         self.name = appdata['name']
         self.macros = appdata['macros']
+        self._logo = None
+        if "logo" in appdata:
+            self._logo = appdata["logo"]
         self._enter = None
         if "enter" in appdata and callable(appdata['enter']):
             self._enter = appdata['enter']
@@ -59,6 +62,9 @@ class App:
         if prev_app and prev_app._leave:
             prev_app._leave(pad=macropad, prev_app=prev_app, next_app=self)
 
+        if self._logo:
+            macropad.display_image("/images/" + self._logo + ".bmp")
+
         group[13].text = self.name   # Application name
         for i in range(12):
             if i < len(self.macros): # Key in use, set label + LED color
@@ -72,6 +78,9 @@ class App:
         macropad.mouse.release_all()
         macropad.stop_tone()
         macropad.pixels.show()
+        if self._logo:
+            time.sleep(1)
+        macropad.display.show(group)
         macropad.display.refresh()
 
         if self._enter:

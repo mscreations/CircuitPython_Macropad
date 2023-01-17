@@ -7,6 +7,7 @@ from macro_actions import S, C
 app = {               # REQUIRED dict, must be named 'app'
     'name' : 'Teams', # Application name
     'exec' : ['teams'], # Executable names
+    'logo' : 'teams',
     'macros' : [      # List of button macros...
         # COLOR    LABEL    KEY SEQUENCE
         # 1st row ----------

@@ -4,6 +4,7 @@ from macro_actions import S
 app = {               # REQUIRED dict, must be named 'app'
     'name' : 'Code', # Application name
     'exec' : ['code','devenv'], # Executable names
+    'logo' : 'code',
     'macros' : [      # List of button macros...
         # COLOR    LABEL    KEY SEQUENCE
         # 1st row ----------
