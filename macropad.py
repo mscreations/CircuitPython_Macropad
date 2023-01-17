@@ -79,7 +79,7 @@ class App:
         macropad.stop_tone()
         macropad.pixels.show()
         if self._logo:
-            time.sleep(1)
+            time.sleep(0.2)
         macropad.display.show(group)
         macropad.display.refresh()
 
