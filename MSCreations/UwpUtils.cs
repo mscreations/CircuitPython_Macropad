@@ -4,7 +4,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace ProcessID
+namespace MSCreations
 {
     // Code is originally from https://github.com/christianjunk/stackoverflow-code-samples/blob/master/src/Q32001621/Q32001621/UwpUtils.cs
 
